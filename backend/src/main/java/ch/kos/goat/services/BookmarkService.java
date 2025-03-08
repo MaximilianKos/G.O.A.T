@@ -71,4 +71,14 @@ public class BookmarkService {
       throw new RuntimeException("Error updating bookmark");
     }
   }
+
+  public void deleteBookmark(Long id) {
+    try {
+      Bookmark bookmark = bookmarkRepository.findById(id).orElseThrow(() -> new RuntimeException("Bookmark not found"));
+      bookmark.setArchived(true);
+      bookmarkRepository.save(bookmark);
+    } catch (Exception e) {
+      throw new RuntimeException("Error deleting bookmark");
+    }
+  }
 }

@@ -29,7 +29,7 @@ public class Tag extends DateAudit {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String name;
   @Column(nullable = false)
   private String color;
