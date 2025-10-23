@@ -1,6 +1,7 @@
 package ch.kos.goat.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -54,4 +55,15 @@ public class TagService {
       throw new RuntimeException("Error deleting tag");
     }
   }
+
+    public Set<Tag> getTagsByIds(List<Long> tagIds) {
+        try {
+            return tagIds.stream()
+                .map(id -> tagRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Tag not found with id: " + id)))
+                .collect(Collectors.toSet());
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching tags by IDs", e);
+        }
+    }
 }

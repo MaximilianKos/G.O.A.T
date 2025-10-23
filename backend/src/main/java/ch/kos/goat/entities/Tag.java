@@ -35,7 +35,7 @@ public class Tag extends DateAudit {
   private String color;
 
   @ManyToMany(mappedBy = "tags")
-  private Set<Bookmark> bookmarks;
+  private Set<Moment> moments;
 
   private String icon;
 }

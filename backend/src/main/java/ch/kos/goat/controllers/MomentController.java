@@ -11,50 +11,50 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.kos.goat.dto.bookmarks.BookmarkRequest;
-import ch.kos.goat.services.BookmarkService;
+import ch.kos.goat.dto.moment.MomentRequest;
+import ch.kos.goat.services.MomentService;
 
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/bookmarks")
+@RequestMapping("/api/moments")
 @AllArgsConstructor
 @CrossOrigin
-public class BookmarkController {
+public class MomentController {
 
-  private final BookmarkService bookmarkService;
+    private final MomentService momentService;
 
   @PostMapping
-  public ResponseEntity<?> createBookmark(@RequestBody BookmarkRequest request) {
+  public ResponseEntity<?> createMoment(@RequestBody MomentRequest request) {
     try {
-      return ResponseEntity.ok(bookmarkService.createBookmark(request));
+        return ResponseEntity.ok(momentService.createMoment(request));
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }
 
   @GetMapping
-  public ResponseEntity<?> getBookmarks() {
+  public ResponseEntity<?> getMoments() {
     try {
-      return ResponseEntity.ok(bookmarkService.getBookmarks());
+        return ResponseEntity.ok(momentService.getMoments());
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<?> updateBookmark(@RequestBody BookmarkRequest request, @PathVariable Long id) {
+  public ResponseEntity<?> updateMoment(@RequestBody MomentRequest request, @PathVariable Long id) {
     try {
-      return ResponseEntity.ok(bookmarkService.updateBookmark(request, id));
+        return ResponseEntity.ok(momentService.updateMoment(request, id));
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteBookmark(@PathVariable Long id) {
+  public ResponseEntity<?> deleteMoment(@PathVariable Long id) {
     try {
-      bookmarkService.deleteBookmark(id);
+        momentService.deleteMoment(id);
       return ResponseEntity.ok().build();
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
