@@ -1,3 +1,18 @@
+# G.O.A.T.
+
+The term "G.O.A.T." stands for "Greatest of All Time." This repository contains the Backend and Frontend code for a web application that allows me to save notable "greatest of all time" items across various categories, such as sports, music, movies, and more.
+
+The application allows saving saving Moments that have meaning to me, like favorite songs, notable sports moments or funny video clips. This collection should serve as a kind of time capsule where moments can be revisited - olds songs can be listened to, significant sport moments can be rewatched. In short its a collection of GOAT things.
+
+It should not only link to the item, but make a copy of the video/song/website so that its persisted even if that item is deleted from the internet.
+
+# Technologies
+
+Backend: Spring boot
+Frontend: Angular, Spring boot
+
+# Evaluation Criteria
+
 ### **1. Longevity & Timelessness**  
 - Has this stood the test of time, or does it feel like a passing trend?  
 - Will people still talk about or admire this decades from now?  
