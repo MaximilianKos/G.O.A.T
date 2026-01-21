@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import ch.kos.goat.mapper.TagMapper;
 import org.springframework.stereotype.Service;
 
 import ch.kos.goat.dto.tags.TagRequest;
@@ -17,53 +18,27 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TagService {
 
-  private final TagRepository tagRepository;
+    private final TagRepository tagRepository;
+    private final TagMapper tagMapper;
 
-  private TagResponse toTagResponse(Tag tag) {
-    return TagResponse.builder()
-        .id(tag.getId())
-        .name(tag.getName())
-        .color(tag.getColor())
-        .createdAt(tag.getCreatedAt())
-        .updatedAt(tag.getUpdatedAt())
-        .build();
-  }
-
-  public TagResponse createTag(TagRequest request) {
-    try {
-      Tag tag = Tag.builder().name(request.getName()).color(request.getColor()).build();
-      tagRepository.save(tag);
-      return toTagResponse(tag);
-    } catch (Exception e) {
-      throw new RuntimeException("Error creating tag");
+    public TagResponse createTag(TagRequest request) {
+        Tag tag = Tag.builder().name(request.getName()).color(request.getColor()).build();
+        return tagMapper.toTagResponse(tagRepository.save(tag));
     }
-  }
 
-  public List<TagResponse> getTags() {
-    try {
-      List<Tag> tags = tagRepository.findAll();
-      return tags.stream().map(this::toTagResponse).collect(Collectors.toList());
-    } catch (Exception e) {
-      throw new RuntimeException("Error getting tags");
+    public List<TagResponse> getTags() {
+        List<Tag> tags = tagRepository.findAll();
+        return tags.stream().map(tagMapper::toTagResponse).toList();
     }
-  }
 
-  public void deleteTag(Long id) {
-    try {
-      tagRepository.deleteById(id);
-    } catch (Exception e) {
-      throw new RuntimeException("Error deleting tag");
+    public void deleteTag(Long id) {
+        tagRepository.deleteById(id);
     }
-  }
 
     public Set<Tag> getTagsByIds(List<Long> tagIds) {
-        try {
-            return tagIds.stream()
+        return tagIds.stream()
                 .map(id -> tagRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Tag not found with id: " + id)))
+                        .orElseThrow(() -> new RuntimeException("Tag not found with id: " + id)))
                 .collect(Collectors.toSet());
-        } catch (Exception e) {
-            throw new RuntimeException("Error fetching tags by IDs", e);
-        }
     }
 }

@@ -1,5 +1,6 @@
 package ch.kos.goat.controllers;
 
+import ch.kos.goat.dto.moment.MomentResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,8 @@ import ch.kos.goat.services.MomentService;
 
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/moments")
 @AllArgsConstructor
@@ -24,41 +27,29 @@ public class MomentController {
 
     private final MomentService momentService;
 
-  @PostMapping
-  public ResponseEntity<?> createMoment(@RequestBody MomentRequest request) {
-    try {
+    @PostMapping
+    public ResponseEntity<MomentResponse> createMoment(@RequestBody MomentRequest request) {
         return ResponseEntity.ok(momentService.createMoment(request));
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().build();
     }
-  }
 
-  @GetMapping
-  public ResponseEntity<?> getMoments() {
-    try {
+    @GetMapping
+    public ResponseEntity<List<MomentResponse>> getMoments() {
         return ResponseEntity.ok(momentService.getMoments());
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().build();
     }
-  }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<?> updateMoment(@RequestBody MomentRequest request, @PathVariable Long id) {
-    try {
+    @GetMapping("/{id}")
+    public ResponseEntity<MomentResponse> getMoment(@PathVariable Long id) {
+        return ResponseEntity.ok(momentService.getMoment(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MomentResponse> updateMoment(@RequestBody MomentRequest request, @PathVariable Long id) {
         return ResponseEntity.ok(momentService.updateMoment(request, id));
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().build();
     }
-  }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteMoment(@PathVariable Long id) {
-    try {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMoment(@PathVariable Long id) {
         momentService.deleteMoment(id);
-      return ResponseEntity.ok().build();
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
-  }
-
 }

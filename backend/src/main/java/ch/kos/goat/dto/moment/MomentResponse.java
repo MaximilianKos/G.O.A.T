@@ -3,17 +3,15 @@ package ch.kos.goat.dto.moment;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import ch.kos.goat.dto.DateAudit;
 import ch.kos.goat.entities.Tag;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
-public class MomentResponse extends DateAudit {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MomentResponse {
 
     private Long id;
     private String title;
