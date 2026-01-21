@@ -38,7 +38,7 @@ public class MomentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MomentResponse> getMoment(@PathVariable Long id){
+    public ResponseEntity<MomentResponse> getMoment(@PathVariable Long id) {
         return ResponseEntity.ok(momentService.getMoment(id));
     }
 
