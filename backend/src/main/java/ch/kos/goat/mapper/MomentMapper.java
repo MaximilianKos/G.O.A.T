@@ -18,7 +18,6 @@ public interface MomentMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "archived", constant = "false")
     @Mapping(target = "clicks", constant = "0")
-    @Mapping(target = "tags", source = "tags")
     @Mapping(target = "localPath", ignore = true)
     @Mapping(target = "archivedAt", ignore = true)
     Moment toEntity(MomentRequest request, Set<Tag> tags);
