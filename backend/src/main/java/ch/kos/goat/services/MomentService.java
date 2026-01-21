@@ -26,7 +26,7 @@ public class MomentService {
     private final MomentMapper momentMapper;
 
     public MomentResponse createMoment(MomentRequest request) {
-        Set<Tag> tags = tagService.getTagsByIds(request.getTagIds()); // implement in TagService
+        Set<Tag> tags = tagService.getTagsByIds(request.getTagIds());
         Moment saved = momentRepository.save(momentMapper.toEntity(request, tags));
         return momentMapper.toMomentResponse(saved);
     }
