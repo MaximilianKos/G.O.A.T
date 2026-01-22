@@ -1,21 +1,15 @@
 package ch.kos.goat.controllers;
 
 import ch.kos.goat.dto.moment.MomentResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ch.kos.goat.dto.moment.MomentRequest;
 import ch.kos.goat.services.MomentService;
 
 import lombok.AllArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,9 +21,12 @@ public class MomentController {
 
     private final MomentService momentService;
 
-    @PostMapping
-    public ResponseEntity<MomentResponse> createMoment(@RequestBody MomentRequest request) {
-        return ResponseEntity.ok(momentService.createMoment(request));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MomentResponse> createMoment(
+            @RequestPart("data") MomentRequest request,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        return ResponseEntity.ok(momentService.createMoment(request, file));
     }
 
     @GetMapping
@@ -42,9 +39,13 @@ public class MomentController {
         return ResponseEntity.ok(momentService.getMoment(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<MomentResponse> updateMoment(@RequestBody MomentRequest request, @PathVariable Long id) {
-        return ResponseEntity.ok(momentService.updateMoment(request, id));
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MomentResponse> updateMoment(
+            @RequestPart("data") MomentRequest request,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(momentService.updateMoment(request, file, id));
     }
 
     @DeleteMapping("/{id}")

@@ -3,23 +3,9 @@ package ch.kos.goat.entities;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import ch.kos.goat.enums.Type;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter
@@ -27,6 +13,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "moments")
 public class Moment extends DateAudit {
@@ -44,11 +31,8 @@ public class Moment extends DateAudit {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
-    private LocalDateTime momentAt;
-
-    private String category;
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
@@ -69,5 +53,7 @@ public class Moment extends DateAudit {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinTable(name = "moment_tags", joinColumns = @JoinColumn(name = "moment_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Tag> tags;
 }

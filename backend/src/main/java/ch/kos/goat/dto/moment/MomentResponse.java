@@ -5,6 +5,7 @@ import java.util.Set;
 
 import ch.kos.goat.entities.Tag;
 
+import ch.kos.goat.enums.Type;
 import lombok.*;
 
 @Data
@@ -17,9 +18,7 @@ public class MomentResponse {
     private String title;
     private String sourceUrl;
     private String description;
-    private LocalDateTime momentAt;
-    private String category;
-    private String type;
+    private Type type;
     private String thumbnailUrl;
     private String localPath;
     private LocalDateTime archivedAt;
