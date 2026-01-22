@@ -2,6 +2,11 @@ spring:
   application:
     name: goat
 
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 10GB
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
