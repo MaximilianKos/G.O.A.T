@@ -1,6 +1,5 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {DatePipe, NgOptimizedImage} from "@angular/common";
 import {BookmarkCardComponent} from "../../components/bookmark-card/bookmark-card.component";
 import {MomentResponseDto} from "../../model/response/moment-response.dto";
 import {MomentService} from "../../services/moment.service";
@@ -212,21 +211,6 @@ export class HomePageComponent implements OnInit {
     this.selectedTag.update(curr => curr?.name === tag.name ? null : tag);
   }
 
-  getTypeIcon(type: string): string {
-    switch (type) {
-      case 'VIDEO':
-        return '🎥';
-      case 'IMAGE':
-        return '🖼️';
-      case 'AUDIO':
-        return '🎵';
-      case 'ARTICLE':
-        return '📄';
-      default:
-        return '📎';
-    }
-  }
-
   onUrlBlur() {
     const urlControl = this.saveMomentForm.get('sourceUrl');
     const urlValue = urlControl?.value;
@@ -248,11 +232,5 @@ export class HomePageComponent implements OnInit {
           });
       }
     }
-  }
-
-  getFileUrl(path: string | null): string {
-    if (!path) return '';
-    if (path.startsWith('http')) return path;
-    return `http://localhost:8080/${path}`;
   }
 }
