@@ -1,6 +1,7 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {BookmarkCardComponent} from "../../components/bookmark-card/bookmark-card.component";
+import {ConfirmationModalComponent} from "../../components/confirmation-modal/confirmation-modal.component";
 import {MomentResponseDto} from "../../model/response/moment-response.dto";
 import {MomentService} from "../../services/moment.service";
 import {TagService} from "../../services/tag.service";
@@ -17,7 +18,8 @@ import {environment} from "../../../environments/environment";
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    BookmarkCardComponent
+    BookmarkCardComponent,
+    ConfirmationModalComponent
   ],
   templateUrl: './home-page.component.html',
 })
@@ -39,6 +41,7 @@ export class HomePageComponent implements OnInit {
   isModalOpen = false;
   isSaving = false;
   editingMoment: MomentResponseDto | null = null;
+  momentToDelete = signal<number | null>(null);
 
   private readonly fuseOptions = {
     keys: ['title', 'description', 'tags.name'],
@@ -183,12 +186,27 @@ export class HomePageComponent implements OnInit {
   }
 
   deleteMoment(id: number) {
-    if (confirm('Delete this moment?')) {
+    this.momentToDelete.set(id);
+  }
+
+  onConfirmDelete() {
+    const id = this.momentToDelete();
+    if (id) {
       this.momentService.deleteMoment(id).subscribe({
-        next: () => console.log('Moment deleted successfully'),
-        error: (err) => console.error('Delete failed', err)
+        next: () => {
+          console.log('Moment deleted successfully');
+          this.momentToDelete.set(null);
+        },
+        error: (err) => {
+          console.error('Delete failed', err);
+          this.momentToDelete.set(null);
+        }
       });
     }
+  }
+
+  onCancelDelete() {
+    this.momentToDelete.set(null);
   }
 
   private resolveTagsToIds(names: string[]): Observable<number[]> {

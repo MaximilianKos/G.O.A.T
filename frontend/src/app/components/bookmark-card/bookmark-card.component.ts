@@ -1,6 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { MomentResponseDto } from '../../model/response/moment-response.dto';
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-bookmark-card',
@@ -17,7 +18,7 @@ export class BookmarkCardComponent {
   getFileUrl(path: string | null): string {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    return `http://localhost:8080/${path}`;
+    return `${environment.fileUrl}${path}`;
   }
 
   getTypeIcon(type: string): string {
