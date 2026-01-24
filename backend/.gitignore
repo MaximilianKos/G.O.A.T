@@ -35,4 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### ENV fo db ###
 .env
+
+### Local save folder ###
+uploads/

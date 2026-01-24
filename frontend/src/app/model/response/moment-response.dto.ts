@@ -1,7 +1,7 @@
-import {Tag} from "../entities/Tag";
+import {TagEntity} from "../entities/tag.entity";
 import {Type} from "../enum/Type";
 
-export interface MomentResponse {
+export interface MomentResponseDto {
   id: number;
   title: string;
   sourceUrl: string;
@@ -12,7 +12,7 @@ export interface MomentResponse {
   archivedAt: string;
   clicks: number;
   archived: boolean;
-  tags: Tag[];
+  tags: TagEntity[];
   createdAt: string;
   updatedAt: string;
 }

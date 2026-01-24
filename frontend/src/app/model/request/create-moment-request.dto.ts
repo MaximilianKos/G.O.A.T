@@ -1,6 +1,6 @@
 import {Type} from "../enum/Type";
 
-export interface CreateMomentRequest {
+export interface CreateMomentRequestDto {
   title: string;
   sourceUrl: string;
   description?: string;

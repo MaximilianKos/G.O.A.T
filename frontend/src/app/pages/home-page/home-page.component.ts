@@ -1,11 +1,12 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {MomentResponse} from "../../Model/response/MomentResponse";
+import {DatePipe, NgOptimizedImage} from "@angular/common";
+import {BookmarkCardComponent} from "../../components/bookmark-card/bookmark-card.component";
+import {MomentResponseDto} from "../../model/response/moment-response.dto";
 import {MomentService} from "../../services/moment.service";
 import {TagService} from "../../services/tag.service";
-import {TagResponse} from "../../Model/response/TagResponse";
-import {CreateTagRequest} from "../../Model/request/CreateTagRequest";
+import {TagResponseDto} from "../../model/response/tag-response.dto";
+import {CreateTagRequestDto} from "../../model/request/create-tag-request.dto";
 import Fuse from 'fuse.js';
 import {forkJoin, map, Observable, of, switchMap} from 'rxjs';
 import {HttpClient} from "@angular/common/http";
@@ -17,9 +18,7 @@ import {environment} from "../../../environments/environment";
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    DatePipe,
-    NgForOf,
-    NgIf
+    BookmarkCardComponent
   ],
   templateUrl: './home-page.component.html',
 })
@@ -36,11 +35,11 @@ export class HomePageComponent implements OnInit {
   isLoading = signal(true);
 
   searchQuery = signal('');
-  selectedTag = signal<TagResponse | null>(null);
+  selectedTag = signal<TagResponseDto | null>(null);
 
   isModalOpen = false;
   isSaving = false;
-  editingMoment: MomentResponse | null = null;
+  editingMoment: MomentResponseDto | null = null;
 
   private readonly fuseOptions = {
     keys: ['title', 'description', 'tags.name'],
@@ -97,7 +96,7 @@ export class HomePageComponent implements OnInit {
     this.tagService.getAllTags().subscribe();
   }
 
-  openModal(moment?: MomentResponse) {
+  openModal(moment?: MomentResponseDto) {
     this.isModalOpen = true;
     this.saveMomentForm.reset({type: 'VIDEO'});
     this.selectedFile = null;
@@ -105,7 +104,7 @@ export class HomePageComponent implements OnInit {
     if (moment) {
       this.editingMoment = moment;
       const tagsString = moment.tags ? moment.tags.map(t => t.name).join(', ') : '';
-      this.saveMomentForm.patchValue({ ...moment, tags: tagsString });
+      this.saveMomentForm.patchValue({...moment, tags: tagsString});
     } else {
       this.editingMoment = null;
     }
@@ -123,9 +122,9 @@ export class HomePageComponent implements OnInit {
     if (file) {
       this.selectedFile = file;
       if (file.type.startsWith('image/')) {
-        this.saveMomentForm.patchValue({ type: 'IMAGE' });
+        this.saveMomentForm.patchValue({type: 'IMAGE'});
       } else if (file.type.startsWith('video/')) {
-        this.saveMomentForm.patchValue({ type: 'VIDEO' });
+        this.saveMomentForm.patchValue({type: 'VIDEO'});
       }
     }
   }
@@ -141,7 +140,11 @@ export class HomePageComponent implements OnInit {
     const currentValue = currentControl?.value as string || '';
     let tags = currentValue.split(',').map(t => t.trim()).filter(t => t.length > 0);
     const index = tags.findIndex(t => t.toLowerCase() === tagName.toLowerCase());
-    if (index > -1) { tags.splice(index, 1); } else { tags.push(tagName); }
+    if (index > -1) {
+      tags.splice(index, 1);
+    } else {
+      tags.push(tagName);
+    }
     currentControl?.setValue(tags.join(', '));
     currentControl?.markAsDirty();
   }
@@ -173,7 +176,10 @@ export class HomePageComponent implements OnInit {
       })
     ).subscribe({
       next: () => this.closeModal(),
-      error: (err) => { console.error('Save/Update failed:', err); this.isSaving = false; }
+      error: (err) => {
+        console.error('Save/Update failed:', err);
+        this.isSaving = false;
+      }
     });
   }
 
@@ -189,29 +195,35 @@ export class HomePageComponent implements OnInit {
   private resolveTagsToIds(names: string[]): Observable<number[]> {
     if (names.length === 0) return of([]);
     const availableTags = this.tagService.availableTags();
-    const tasks: Observable<TagResponse>[] = [];
+    const tasks: Observable<TagResponseDto>[] = [];
     names.forEach(name => {
       const existing = availableTags.find(t => t.name.toLowerCase() === name);
-      if (existing) { tasks.push(of(existing)); }
-      else {
-        const newTagReq: CreateTagRequest = { name: name, color: '#6366f1' };
+      if (existing) {
+        tasks.push(of(existing));
+      } else {
+        const newTagReq: CreateTagRequestDto = {name: name, color: '#6366f1'};
         tasks.push(this.tagService.createTag(newTagReq));
       }
     });
     return forkJoin(tasks).pipe(map(tags => tags.map(t => t.id)));
   }
 
-  toggleTagFilter(tag: TagResponse) {
+  toggleTagFilter(tag: TagResponseDto) {
     this.selectedTag.update(curr => curr?.name === tag.name ? null : tag);
   }
 
   getTypeIcon(type: string): string {
     switch (type) {
-      case 'VIDEO': return '🎥';
-      case 'IMAGE': return '🖼️';
-      case 'AUDIO': return '🎵';
-      case 'ARTICLE': return '📄';
-      default: return '📎';
+      case 'VIDEO':
+        return '🎥';
+      case 'IMAGE':
+        return '🖼️';
+      case 'AUDIO':
+        return '🎵';
+      case 'ARTICLE':
+        return '📄';
+      default:
+        return '📎';
     }
   }
 

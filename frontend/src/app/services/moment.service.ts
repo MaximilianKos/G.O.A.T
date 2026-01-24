@@ -1,8 +1,8 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable, tap} from "rxjs";
-import {CreateMomentRequest} from "../Model/request/CreateMomentRequest";
-import {MomentResponse} from "../Model/response/MomentResponse";
+import {CreateMomentRequestDto} from "../model/request/create-moment-request.dto";
+import {MomentResponseDto} from "../model/response/moment-response.dto";
 import {environment} from "../../environments/environment";
 
 @Injectable({
@@ -12,10 +12,10 @@ export class MomentService {
 
   private readonly http = inject(HttpClient);
 
-  private readonly _allMoments = signal<MomentResponse[]>([]);
+  private readonly _allMoments = signal<MomentResponseDto[]>([]);
   readonly allMoments = this._allMoments.asReadonly();
 
-  saveMoment(req: CreateMomentRequest, file?: File): Observable<MomentResponse> {
+  saveMoment(req: CreateMomentRequestDto, file?: File): Observable<MomentResponseDto> {
     const formData = new FormData();
 
     formData.append('data', new Blob([JSON.stringify(req)], {
@@ -26,14 +26,14 @@ export class MomentService {
       formData.append('file', file);
     }
 
-    return this.http.post<MomentResponse>(`${environment.backendUrl}moments`, formData).pipe(
+    return this.http.post<MomentResponseDto>(`${environment.backendUrl}moments`, formData).pipe(
       tap(savedMoment => {
         this._allMoments.update(list => [savedMoment, ...list]);
       })
     );
   }
 
-  updateMoment(id: number, req: CreateMomentRequest, file?: File): Observable<MomentResponse> {
+  updateMoment(id: number, req: CreateMomentRequestDto, file?: File): Observable<MomentResponseDto> {
     const formData = new FormData();
     formData.append('data', new Blob([JSON.stringify(req)], {type: 'application/json'}));
 
@@ -41,15 +41,15 @@ export class MomentService {
       formData.append('file', file);
     }
 
-    return this.http.put<MomentResponse>(`${environment.backendUrl}moments/${id}`, formData).pipe(
+    return this.http.put<MomentResponseDto>(`${environment.backendUrl}moments/${id}`, formData).pipe(
       tap(updatedMoment => {
         this._allMoments.update(list => list.map(m => m.id === id ? updatedMoment : m));
       })
     );
   }
 
-  getMoments(): Observable<MomentResponse[]> {
-    return this.http.get<MomentResponse[]>(`${environment.backendUrl}moments`).pipe(
+  getMoments(): Observable<MomentResponseDto[]> {
+    return this.http.get<MomentResponseDto[]>(`${environment.backendUrl}moments`).pipe(
       tap(fetchedMoments => {
         this._allMoments.set(fetchedMoments);
       })
