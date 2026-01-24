@@ -183,4 +183,15 @@
       </div>
     </div>
   }
+
+  @if (momentToDelete()) {
+    <app-confirmation-modal
+      title="Delete Moment"
+      message="Are you sure you want to delete this moment? This action cannot be undone."
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      (confirmed)="onConfirmDelete()"
+      (cancelled)="onCancelDelete()">
+    </app-confirmation-modal>
+  }
 </div>
