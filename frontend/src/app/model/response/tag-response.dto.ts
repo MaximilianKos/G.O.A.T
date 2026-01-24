@@ -1,4 +1,4 @@
-export interface TagResponse {
+export interface TagResponseDto {
   id: number,
   name: string,
   color: string

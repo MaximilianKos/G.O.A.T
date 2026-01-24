@@ -1,1 +1,84 @@
-<p>bookmark-card works!</p>
+<div class="group bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-600 hover:shadow-2xl hover:shadow-black/50 transition-all duration-300 flex flex-col h-full">
+  <div class="relative aspect-video bg-zinc-950 flex items-center justify-center overflow-hidden">
+    @if (moment().type === 'IMAGE' || moment().type === 'ARTICLE') {
+      <div class="relative w-full h-full">
+        <img [ngSrc]="moment().localPath ? getFileUrl(moment().localPath) : moment().thumbnailUrl" fill
+             class="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+             alt="thumbnail image of moment">
+      </div>
+    }
+
+    @if (moment().type === 'VIDEO' && moment().localPath) {
+      <video
+        [src]="getFileUrl(moment().localPath)"
+        class="w-full h-full object-cover"
+        controls>
+      </video>
+    }
+
+    @if (moment().type === 'VIDEO' && !moment().localPath) {
+      <div class="relative w-full h-full group/video">
+        <img [ngSrc]="moment().thumbnailUrl"
+             fill
+             class="object-cover opacity-60 group-hover/video:opacity-40 transition-opacity"
+             alt="replacement thumbnail for video moment">
+
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span
+            class="text-5xl filter drop-shadow-lg opacity-80 group-hover/video:scale-110 transition-transform">▶️</span>
+        </div>
+        <a [href]="moment().sourceUrl" target="_blank" class="absolute inset-0 z-10"
+           title="Watch on original site"></a>
+      </div>
+    }
+
+    @if (moment().type !== 'IMAGE' && moment().type !== 'VIDEO') {
+      <div class="text-4xl opacity-50">{{ getTypeIcon(moment().type) }}</div>
+    }
+
+    <div class="absolute top-3 right-3 z-20">
+      @if (moment().archived) {
+        <span
+          class="flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold">
+            ✓ Secured
+          </span>
+      } @else {
+        <span
+          class="flex items-center gap-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold">
+            ⚠ Link Only
+          </span>
+      }
+    </div>
+  </div>
+
+  <div class="p-5 flex-1 flex flex-col">
+    <div class="flex items-start justify-between gap-4 mb-2">
+      <h3 class="text-lg font-bold text-white leading-tight group-hover:text-indigo-400 transition-colors">
+        <a [href]="moment().sourceUrl" target="_blank">{{ moment().title }}</a>
+      </h3>
+      <span class="text-xs text-zinc-500 whitespace-nowrap">{{ moment().createdAt | date:'MMM d, y' }}</span>
+    </div>
+
+    @if (moment().description) {
+      <p class="text-zinc-400 text-sm mb-4 line-clamp-3">{{ moment().description }}</p>
+    }
+
+    <div class="mt-auto flex items-center justify-between pt-4 border-t border-zinc-800/50">
+      <div class="flex flex-wrap gap-1">
+        @for (t of moment().tags.slice(0, 3); track t.name) {
+          <span
+            class="text-[10px] uppercase tracking-wider text-zinc-500 bg-zinc-800/50 px-1.5 py-0.5 rounded">{{ t.name }}</span>
+        }
+      </div>
+
+      <div class="flex gap-2">
+        <button (click)="edit.emit(moment())"
+                class="p-1.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded transition">✏️
+        </button>
+        <button (click)="remove.emit(moment().id)"
+                class="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-zinc-800 rounded transition">🗑️
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

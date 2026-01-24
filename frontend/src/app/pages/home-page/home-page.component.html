@@ -5,8 +5,10 @@
       <div class="flex items-center justify-between h-20">
         <div class="flex items-center gap-4">
           <div class="relative group cursor-default">
-            <div class="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-            <div class="relative w-12 h-12 bg-[#0a0a0a] border border-white/10 rounded-xl flex items-center justify-center">
+            <div
+              class="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+            <div
+              class="relative w-12 h-12 bg-[#0a0a0a] border border-white/10 rounded-xl flex items-center justify-center">
               <span class="text-2xl filter drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">🏛️</span>
             </div>
           </div>
@@ -39,16 +41,17 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
     <div class="flex flex-wrap gap-2 mb-10">
-      <button
-        *ngFor="let tag of uniqueTags()"
-        (click)="toggleTagFilter(tag)"
-        [class.bg-indigo-600]="selectedTag()?.name === tag.name"
-        [class.text-white]="selectedTag()?.name === tag.name"
-        [class.bg-zinc-900]="selectedTag()?.name !== tag.name"
-        [class.text-zinc-400]="selectedTag()?.name !== tag.name"
-        class="px-3 py-1 rounded-md text-xs font-medium border border-zinc-800 hover:border-zinc-600 transition-colors capitalize">
-        #{{ tag.name }}
-      </button>
+      @for (tag of uniqueTags(); track tag.name) {
+        <button
+          (click)="toggleTagFilter(tag)"
+          [class.bg-indigo-600]="selectedTag()?.name === tag.name"
+          [class.text-white]="selectedTag()?.name === tag.name"
+          [class.bg-zinc-900]="selectedTag()?.name !== tag.name"
+          [class.text-zinc-400]="selectedTag()?.name !== tag.name"
+          class="px-3 py-1 rounded-md text-xs font-medium border border-zinc-800 hover:border-zinc-600 transition-colors capitalize">
+          #{{ tag.name }}
+        </button>
+      }
     </div>
 
     @if (isLoading()) {
@@ -56,74 +59,14 @@
         <div class="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
         <p class="text-zinc-500 text-sm animate-pulse tracking-wide">Accessing Secure Vault...</p>
       </div>
-    }
-
-    @else {
+    } @else {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (moment of filteredMoments(); track moment.id) {
-          <div class="group bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-600 hover:shadow-2xl hover:shadow-black/50 transition-all duration-300 flex flex-col">
-            <div class="relative aspect-video bg-zinc-950 flex items-center justify-center overflow-hidden">
-              <img *ngIf="moment.type === 'IMAGE'"
-                   [src]="moment.localPath ? getFileUrl(moment.localPath) : moment.thumbnailUrl"
-                   class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
-
-              <video *ngIf="moment.type === 'VIDEO' && moment.localPath"
-                     [src]="getFileUrl(moment.localPath)"
-                     class="w-full h-full object-cover"
-                     controls>
-              </video>
-
-              <div *ngIf="moment.type === 'VIDEO' && !moment.localPath" class="relative w-full h-full group/video">
-                <img [src]="moment.thumbnailUrl" class="w-full h-full object-cover opacity-60 group-hover/video:opacity-40 transition-opacity">
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-5xl filter drop-shadow-lg opacity-80 group-hover/video:scale-110 transition-transform">▶️</span>
-                </div>
-                <a [href]="moment.sourceUrl" target="_blank" class="absolute inset-0 z-10" title="Watch on original site"></a>
-              </div>
-
-              @if (moment.type !== 'IMAGE' && moment.type !== 'VIDEO') {
-                <div class="text-4xl opacity-50">{{ getTypeIcon(moment.type) }}</div>
-              }
-
-              <div class="absolute top-3 right-3 z-20">
-                @if (moment.archived) {
-                  <span class="flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold">
-                      ✓ Secured
-                    </span>
-                } @else {
-                  <span class="flex items-center gap-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold">
-                      ⚠ Link Only
-                    </span>
-                }
-              </div>
-            </div>
-
-            <div class="p-5 flex-1 flex flex-col">
-              <div class="flex items-start justify-between gap-4 mb-2">
-                <h3 class="text-lg font-bold text-white leading-tight group-hover:text-indigo-400 transition-colors">
-                  <a [href]="moment.sourceUrl" target="_blank">{{ moment.title }}</a>
-                </h3>
-                <span class="text-xs text-zinc-500 whitespace-nowrap">{{ moment.createdAt | date:'MMM d, y' }}</span>
-              </div>
-
-              @if (moment.description) {
-                <p class="text-zinc-400 text-sm mb-4 line-clamp-3">{{ moment.description }}</p>
-              }
-
-              <div class="mt-auto flex items-center justify-between pt-4 border-t border-zinc-800/50">
-                <div class="flex flex-wrap gap-1">
-                  @for (t of moment.tags?.slice(0, 3); track t.name) {
-                    <span class="text-[10px] uppercase tracking-wider text-zinc-500 bg-zinc-800/50 px-1.5 py-0.5 rounded">{{ t.name }}</span>
-                  }
-                </div>
-
-                <div class="flex gap-2">
-                  <button (click)="openModal(moment)" class="p-1.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded transition">✏️</button>
-                  <button (click)="deleteMoment(moment.id)" class="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-zinc-800 rounded transition">🗑️</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <app-bookmark-card
+            [moment]="moment"
+            (edit)="openModal($event)"
+            (remove)="deleteMoment($event)">
+          </app-bookmark-card>
         }
       </div>
 
@@ -139,8 +82,10 @@
   </main>
 
   @if (isModalOpen) {
-    <div (click)="closeModal()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm cursor-pointer">
-      <div (click)="$event.stopPropagation()" class="bg-zinc-900 border border-zinc-800 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative animate-in fade-in zoom-in duration-200 cursor-default">
+    <div (click)="closeModal()"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm cursor-pointer">
+      <div (click)="$event.stopPropagation()"
+           class="bg-zinc-900 border border-zinc-800 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative animate-in fade-in zoom-in duration-200 cursor-default">
         <h2 class="text-xl font-bold text-white mb-6">
           {{ editingMoment ? 'Edit Moment' : 'Preserve New Moment' }}
         </h2>
@@ -195,7 +140,8 @@
                    placeholder="sports, meme, classic">
 
             <div class="mt-3">
-              <label class="block text-[10px] font-medium text-zinc-500 mb-2 uppercase tracking-wider">Available Tags (Click to Toggle)</label>
+              <label class="block text-[10px] font-medium text-zinc-500 mb-2 uppercase tracking-wider">Available Tags
+                (Click to Toggle)</label>
               <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
                 @for (tag of tagService.availableTags(); track tag.id) {
                   <button type="button"
@@ -227,7 +173,9 @@
             </button>
             <button type="submit" [disabled]="isSaving"
                     class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg shadow-lg shadow-indigo-600/20 transition flex items-center gap-2">
-              @if (isSaving) { <span>⏳</span> }
+              @if (isSaving) {
+                <span>⏳</span>
+              }
               {{ editingMoment ? 'Update' : 'Archive Forever' }}
             </button>
           </div>
